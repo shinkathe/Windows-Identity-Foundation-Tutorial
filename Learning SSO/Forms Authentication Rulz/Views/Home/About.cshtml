@@ -5,12 +5,9 @@
 <h2>@ViewBag.Title.</h2>
 <h3>@ViewBag.Message</h3>
 
-<p>Use this area to provide additional information.</p>
-
-
 @if (User.Identity.IsAuthenticated)
 {
-    <p>You're authenticated btw.</p>
+    <p>You're authenticated with forms authentication<p>
     var s = (ClaimsIdentity)User.Identity;
     var name = s.FindFirst(ClaimTypes.Name).Value;
     <p>Your name in claimsland is @name</p>
