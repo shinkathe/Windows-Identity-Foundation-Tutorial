@@ -18,7 +18,7 @@ namespace Forms_Authentication_Rulz.Controllers
         [Route("submit")]
         public ActionResult Login(string username, string password)
         {
-            if (username == "test" && password == "test")
+            if (password == "test")
             {
                 FormsAuthentication.SetAuthCookie(username, true);
             }

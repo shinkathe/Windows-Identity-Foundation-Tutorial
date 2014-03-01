@@ -7,8 +7,8 @@
 
 @if (User.Identity.IsAuthenticated)
 {
-    <p>You're authenticated with forms authentication<p>
+    <p>Hello, you're now authenticated as a Forms Authenticated user. What about if we look at your claims?</p>
     var s = (ClaimsIdentity)User.Identity;
     var name = s.FindFirst(ClaimTypes.Name).Value;
-    <p>Your name in claimsland is @name</p>
+    <p>*Poof* Done, and from the claims identity we can decipher that you logged in as @name</p>
 }
