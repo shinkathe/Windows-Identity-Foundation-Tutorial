@@ -21,28 +21,34 @@ using System.Security.Principal;
 
 namespace STS.Controllers
 {
-    public class Authentication {
-
-        private IPrincipal PreAuthenticate()
+    public class Authenticator {
+        /// <summary>
+        /// User hadn't logged in before, so set an authentication cookie in the WSFed response for this domain
+        /// </summary>
+        /// 
+        private IPrincipal AuthenticateAndCreateCookie()
         {
-            var ci = new ClaimsIdentity(AuthenticationTypes.Federation);
-            ci.AddClaim(new Claim(ClaimTypes.Name, "test"));
-            var claimsPrincipal = new ClaimsPrincipal(ci);
+            var claimsIdentity = new ClaimsIdentity(AuthenticationTypes.Federation);
+            claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, "test"));
+            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-            var s = new SessionSecurityToken(claimsPrincipal, TimeSpan.FromDays(365));
-            FederatedAuthentication.SessionAuthenticationModule.WriteSessionTokenToCookie(s);
+            var sessionSecurityToken = new SessionSecurityToken(claimsPrincipal, TimeSpan.FromDays(365));
+            FederatedAuthentication.SessionAuthenticationModule.WriteSessionTokenToCookie(sessionSecurityToken);
             return claimsPrincipal;
         }
 
-        private IPrincipal PreAuthenticateIsAuthenticated()
+        /// <summary>
+        /// The user had already signed in from one domain, sign the user in from the previously set cookie
+        /// </summary>
+        private IPrincipal PreviouslyAuthenticated()
         {
-            var s = System.Web.HttpContext.Current.User;
-            return s;
+            var user = System.Web.HttpContext.Current.User;
+            return user;
         }
 
         public void Authenticate()
         {
-            var user = System.Web.HttpContext.Current.User.Identity.IsAuthenticated ? PreAuthenticateIsAuthenticated() : PreAuthenticate();
+            var user = System.Web.HttpContext.Current.User.Identity.IsAuthenticated ? PreviouslyAuthenticated() : AuthenticateAndCreateCookie();
             var config = new SecurityTokenServiceConfiguration(true);
             config.SigningCredentials = new X509SigningCredentials(CertificateUtil.GetCertificate(StoreName.My, StoreLocation.LocalMachine, "CN=learnSSO"));
             config.TokenIssuerName = "http://sts.local/";
@@ -55,9 +61,9 @@ namespace STS.Controllers
         [Route("")]
         public void Index()
         {
-            var s = new Authentication();
+            var authenticator = new Authenticator();
 
-            s.Authenticate();
+            authenticator.Authenticate();
         }
 	}
 }
