@@ -1,0 +1,14 @@
+﻿@using System.Security.Claims;
+@{
+    ViewBag.Title = "About";
+}
+<h2>@ViewBag.Title.</h2>
+<h3>@ViewBag.Message</h3>
+
+@if (User.Identity.IsAuthenticated)
+{
+    <p>Hello, you're now authenticated as a Forms Authenticated user. What about if we look at your claims?</p>
+    var s = (ClaimsIdentity)User.Identity;
+    var name = s.FindFirst(ClaimTypes.Name).Value;
+    <p>*Poof* Done, and from the claims identity we can decipher that you logged in as @name</p>
+}
