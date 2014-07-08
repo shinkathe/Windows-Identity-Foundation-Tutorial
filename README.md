@@ -1,7 +1,5 @@
-SSO
+Windows Identity Foundation Tutorial
 ===
-
-Towards SSO
 
 This is a repository for the sample code presented in a series of blog posts by me, explaining in detail how to implement Single sign on with Windows Identity Foundation.
 
