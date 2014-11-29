@@ -20,7 +20,7 @@ namespace STS.Controllers
         public List<string> LogoutUrls;
         public string ReplyTo;
     }
-
+    
     public class AuthenticationService {
         public const string SignOutLiteral = "wsignout1.0";
         public const string SignOutCleanupLiteral = "wsignoutcleanup1.0";
@@ -53,6 +53,10 @@ namespace STS.Controllers
             return new ClaimsPrincipal(user);;
         }
 
+        /// <summary>
+        /// Figure out, if the user wants to sign in or sign out, and do the correct path based on that
+        /// </summary>
+        /// <returns></returns>
         public ActionResult ProcessRequest()
         {
             var message = WSFederationMessage.CreateFromUri(HttpContext.Current.Request.Url);
@@ -61,6 +65,11 @@ namespace STS.Controllers
             return message.Action == SignOutLiteral ? SignOut(reply) : SignIn(realm);
         }
         
+        /// <summary>
+        /// Find out which realms the user is signed in - sign them out from all of them, and return to @replyTo
+        /// </summary>
+        /// <param name="replyTo">Redirect to this address after signout is done</param>
+        /// <returns>A bit of html, which renders images with signout urls for all domains.</returns>
         private ActionResult SignOut(string replyTo)
         {
             FederatedAuthentication.SessionAuthenticationModule.SignOut();
@@ -78,17 +87,16 @@ namespace STS.Controllers
         private ActionResult SignIn(string realm)
         {
             var user = HttpContext.Current.User.Identity.IsAuthenticated ? PreviouslyAuthenticated(realm) : AuthenticateAndCreateCookie(realm);
-            var config = new SecurityTokenServiceConfiguration(true)
-            {
-                SigningCredentials = new X509SigningCredentials(CertificateUtil.GetCertificate(StoreName.My, StoreLocation.LocalMachine, "CN=learningSSO")),
-                TokenIssuerName = "http://sts.local/"
-            };
+            var config = new SecurityTokenServiceConfiguration("http://sts.local", new X509SigningCredentials(CertificateUtil.GetCertificate(StoreName.My, StoreLocation.LocalMachine, "CN=learningSSO")));
 
             FederatedPassiveSecurityTokenServiceOperations.ProcessRequest(HttpContext.Current.Request, (ClaimsPrincipal) user, new CustomTokenService(config), HttpContext.Current.Response);
             return new HttpStatusCodeResult(HttpStatusCode.OK);
         }
     }
 
+    /// <summary>
+    /// Entry point into our STS
+    /// </summary>
     public class AuthenticationController : Controller
     {
         [Route("")]

@@ -15,4 +15,6 @@ The blogposts can be viewed here:
 
 [Part 5 - Single Sign On](http://www.tuomistolari.net/blog/2014/3/9/sso-with-windows-identity-foundation-part-v-sso)
 
+[Part 6 - Single Sign Off](http://www.tuomistolari.net/blog/2014/11/29/sso-with-windows-identity-foundation-part-vi-single-sign-off)
+
 Check more of my stuff at [my website](http://www.tuomistolari.net)
