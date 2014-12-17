@@ -2,12 +2,14 @@
 
 <script src="@Url.Content("~/Scripts/jquery-1.10.2.min.js")"></script>
 
-@foreach (var i in Model.LogoutUrls)
+@foreach (var logoutUrl in Model.LogoutUrls)
 {
-    <img src="@i" alt="@i" /> @i
+    // logoutUrl will look like: http://client1.local/?wa=wsignoutcleanup1.0
+    <img src="@logoutUrl" alt="@logoutUrl" /> @logoutUrl
 }
 
 <script>
+    // When window load is called, the above images will have finished loading, and the realms will be logged out
     $(window).load(function () {
         window.location = "@Model.ReplyTo";
     });
