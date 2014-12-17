@@ -11,6 +11,7 @@ namespace Client1.Controllers
             return View();
         }
 
+        [Authorize]
         [Route("about")]
         public ActionResult About()
         {

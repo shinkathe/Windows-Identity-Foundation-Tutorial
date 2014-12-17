@@ -19,8 +19,6 @@ namespace STS.Controllers
         public List<string> LogoutUrls;
         public string ReplyTo;
     }
-
-
     
     public class AuthenticationService {
         public const string SignOutLiteral = "wsignout1.0";
